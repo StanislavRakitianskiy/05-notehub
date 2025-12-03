@@ -1,4 +1,3 @@
-// src/components/SearchBox/SearchBox.tsx
 import css from "./SearchBox.module.css";
 import type { ChangeEvent } from "react";
 

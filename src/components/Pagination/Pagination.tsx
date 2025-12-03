@@ -1,6 +1,4 @@
-// src/components/Pagination/Pagination.tsx
 import ReactPaginate from "react-paginate";
-// import { MouseEvent } from "react";
 import css from "./Pagination.module.css";
 
 interface PaginationProps {
@@ -15,7 +13,7 @@ const Pagination = ({
   onPageChange,
 }: PaginationProps) => {
   const handlePageChange = (selectedItem: { selected: number }) => {
-    onPageChange(selectedItem.selected + 1); // ReactPaginate 0-based → ми 1-based
+    onPageChange(selectedItem.selected + 1);
   };
 
   return (

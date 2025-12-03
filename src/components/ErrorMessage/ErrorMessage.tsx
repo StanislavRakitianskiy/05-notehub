@@ -1,4 +1,3 @@
-// src/components/ErrorMessage/ErrorMessage.tsx
 import css from "./ErrorMessage.module.css";
 
 interface ErrorMessageProps {

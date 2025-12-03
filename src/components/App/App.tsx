@@ -1,4 +1,3 @@
-// src/components/App/App.tsx
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
@@ -30,7 +29,10 @@ const App = () => {
   const [debouncedSearch] = useDebounce(search, 500);
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, error } = useQuery<FetchNotesResponse, Error>({
+  const { data, isLoading, isError, error } = useQuery<
+    FetchNotesResponse,
+    Error
+  >({
     queryKey: ["notes", page, debouncedSearch],
     queryFn: () =>
       fetchNotes({
@@ -55,7 +57,6 @@ const App = () => {
     },
   });
 
-  // 👇 змінили тип параметра
   const handleCreateNote = async (values: CreateNotePayload) => {
     await createNoteMutation.mutateAsync(values);
   };
@@ -81,8 +82,8 @@ const App = () => {
     setIsModalOpen(false);
   };
 
-const notes: Note[] = data?.notes ?? [];
-const totalPages: number = data?.totalPages ?? 1;
+  const notes: Note[] = data?.notes ?? [];
+  const totalPages: number = data?.totalPages ?? 1;
 
   return (
     <div className={css.app}>

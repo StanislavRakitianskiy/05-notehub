@@ -1,4 +1,3 @@
-// src/components/NoteForm/NoteForm.tsx
 import { Formik, Form, Field, ErrorMessage, type FormikHelpers } from "formik";
 import * as Yup from "yup";
 
@@ -124,4 +123,3 @@ const NoteForm = ({ onSubmit, onCancel, isSubmitting }: NoteFormProps) => {
 };
 
 export default NoteForm;
-// export type { NoteFormValues };

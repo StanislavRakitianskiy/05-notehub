@@ -1,4 +1,3 @@
-// src/components/Modal/Modal.tsx
 import { type ReactNode, useEffect, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import css from "./Modal.module.css";
