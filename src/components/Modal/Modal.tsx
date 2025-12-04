@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, type MouseEvent } from "react";
+import {type ReactNode, useEffect, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import css from "./Modal.module.css";
 
@@ -17,8 +17,15 @@ const Modal = ({ children, onClose }: ModalProps) => {
       }
     };
 
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = originalOverflow;
+    };
   }, [onClose]);
 
   const handleBackdropClick = (event: MouseEvent<HTMLDivElement>) => {

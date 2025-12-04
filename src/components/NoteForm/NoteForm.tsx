@@ -1,20 +1,19 @@
 import { Formik, Form, Field, ErrorMessage, type FormikHelpers } from "formik";
 import * as Yup from "yup";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import css from "./NoteForm.module.css";
 import type { NoteTag } from "../../types/note";
-import type { CreateNotePayload } from "../../services/noteService";
+import { createNote, type CreateNotePayload } from "../../services/noteService";
 
 export interface NoteFormValues {
   title: string;
   content: string;
-  tag: NoteTag | "";
+  tag: NoteTag;
 }
 
 interface NoteFormProps {
-  onSubmit: (values: CreateNotePayload) => void; // 👈 важливо
-  onCancel: () => void;
-  isSubmitting?: boolean;
+  onClose: () => void;
 }
 
 const validationSchema = Yup.object().shape({
@@ -34,28 +33,40 @@ const initialValues: NoteFormValues = {
   tag: "Todo",
 };
 
-const NoteForm = ({ onSubmit, onCancel, isSubmitting }: NoteFormProps) => {
+const NoteForm = ({ onClose }: NoteFormProps) => {
+  const queryClient = useQueryClient();
+
+  const createNoteMutation = useMutation({
+    mutationFn: (payload: CreateNotePayload) => createNote(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      onClose();
+    },
+  });
+
   const handleSubmit = (
     values: NoteFormValues,
     formikHelpers: FormikHelpers<NoteFormValues>
   ) => {
     const { setSubmitting, resetForm } = formikHelpers;
 
-    // тут ми з union-типу робимо валідний payload для бекенду
-    const payload: CreateNotePayload = {
-      title: values.title,
-      content: values.content,
-      tag: values.tag as NoteTag,
-    };
-
-    onSubmit(payload);
-
-    setSubmitting(false);
-    resetForm();
+    createNoteMutation.mutate(
+      {
+        title: values.title,
+        content: values.content,
+        tag: values.tag,
+      },
+      {
+        onSettled: () => {
+          setSubmitting(false);
+          resetForm();
+        },
+      }
+    );
   };
 
   const handleCancelClick = () => {
-    onCancel();
+    onClose();
   };
 
   return (
@@ -64,7 +75,7 @@ const NoteForm = ({ onSubmit, onCancel, isSubmitting }: NoteFormProps) => {
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {({ isSubmitting: isFormikSubmitting }) => (
+      {({ isSubmitting }) => (
         <Form className={css.form}>
           <div className={css.formGroup}>
             <label htmlFor="title">Title</label>
@@ -111,7 +122,7 @@ const NoteForm = ({ onSubmit, onCancel, isSubmitting }: NoteFormProps) => {
             <button
               type="submit"
               className={css.submitButton}
-              disabled={isSubmitting || isFormikSubmitting}
+              disabled={isSubmitting || createNoteMutation.isPending}
             >
               Create note
             </button>
